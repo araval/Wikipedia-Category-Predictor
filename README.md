@@ -72,7 +72,7 @@ articles, and storing the urls in a list will require about 5*10^6 * 90(bytes) /
 However, when I finally download articles, I download for each category and write to disk. If a category turns out to be very large, or have very long articles, then I will have to split the list of urls and output separate files. 
 
 #### Modeling
-If suppose we were to use the entire Wikipedia corpus to have a category-predictor for new articles, then we will need to re-write this part of the code to use Spark with MLlib. Once this code is ready, it can easily be used on AWS after spinning up a few (~5+) spark-clusters, depending on available time.
+If suppose we were to use the entire Wikipedia corpus to have a category-predictor for new articles, then we will need to re-write this part of the code to use Spark with MLlib. Once this code is ready, it can easily be used on AWS after spinning up a spark-cluster with ~5 nodes, depending on time.
 
 
 ## ~~Interesting~~ Some facts:

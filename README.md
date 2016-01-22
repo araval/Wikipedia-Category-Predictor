@@ -5,7 +5,8 @@
 Requried scripts:
 
 1. "_The first scrapes the webpages and builds the dataset and a serialized classifier_ "  
-These are _scraper.py_ and _model.py_ , together in one bash script *scape_and_model.sh*. _scarper.py_ reads categories from _categories.txt_, creates a directory _data_, where it stores each category's data in a separate file. _model.py_ reads from _data_, and creates a model which it saves in directory _pickledModel_.
+These are _scraper.py_ and _model.py_ , together in one bash script *scape_and_model.sh*.   
+_scarper.py_ reads categories from _categories.txt_ if present, otherwise, uses default hard-coded list of categories, creates a directory _data_, where it stores each category's data in a separate file. _model.py_ reads from _data_, and creates a model which it saves in directory _pickledModel_. To add or remove categories only _categories.txt_ needs to be modified. 
 
 2. "_The second should take in a new Wikipedia url as input and output the probabilities of belonging to each category_"  
    This one is _predict.py_. It takes a url from raw_input and produces output as shown below. 

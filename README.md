@@ -4,10 +4,10 @@
 
 Requried scripts:
 
-1. "_The first scrapes the webpages and builds the dataset and a serialized classifier_ "
-These are (1a) _scraper.py_ and (1b)_model.py_ , together in one bash script *scape_and_model.sh*. _scarper.py_ reads categories from _categories.txt_, creates a directory _data_, where it stores each category's data in a separate file. _model.py_ reads from _data_, and creates a model which it saves to _pickledModel_.
+1. "_The first scrapes the webpages and builds the dataset and a serialized classifier_ "  
+These are _scraper.py_ and _model.py_ , together in one bash script *scape_and_model.sh*. _scarper.py_ reads categories from _categories.txt_, creates a directory _data_, where it stores each category's data in a separate file. _model.py_ reads from _data_, and creates a model which it saves in directory _pickledModel_.
 
-2. "_The second should take in a new Wikipedia url as input and output the probabilities of belonging to each category_"
+2. "_The second should take in a new Wikipedia url as input and output the probabilities of belonging to each category_"  
    This one is _predict.py_. It takes a url from raw_input and produces output as shown below. 
 
 The packages I used are listed in _requirements.txt_. 
@@ -26,7 +26,9 @@ Probabilities:
           Congenital_disorders 02.76%
            Infectious_diseases 02.20%
                  Rare_diseases 01.96%
-
+                 
+                 
+Predicted Category: Machine_learning_algorithms
 ```
 
 ## Model
@@ -70,14 +72,7 @@ articles, and storing the urls in a list will require about 5*10^6 * 90(bytes) /
 However, when I finally download articles, I download for each category and write to disk. If a category turns out to be very large, or have very long articles, then I will have to split the list of urls and output separate files. 
 
 #### Modeling
-If suppose we were to use the entire Wikipedia to have a classifier for future articles say, then we will need to re-write this
-part of the code to use mllib with spark. For the entire Wikipedia corpus, which is at least larger than 10 GB, we need cloud-
-services such as AWS. Once the spark-code is ready, it can easily be used on AWS after spinning up about 5-10 spark-clusters.
-
-
-
-
-
+If suppose we were to use the entire Wikipedia corpus to have a category-predictor for new articles, then we will need to re-write this part of the code to use Spark with MLlib. Once this code is ready, it can easily be used on AWS after spinning up a few (~5+) spark-clusters, depending on available time.
 
 
 ## ~~Interesting~~ Some facts:
@@ -123,7 +118,7 @@ We might see significant difference if we use upper level categories such as "Sc
 
 
 ## Next Steps
-1. Updating the model to run on a cluster would be a natural next step. For this I would work building a model with _Spark-mllib_.
-2. I can come up with a better way for evaluating the model. I only need to have my own predict and scoring function, and use sklearns probabilities. predict() would select labels based on some probability threshold, and scoring would take into account matches between the one category label we provide in training/test data, and the list of labels from predict().
+1. Updating the model to run on a cluster would be a natural next step. For this I would work with _Spark_.
+2. I should come up with a better way for evaluating the model. I only need to have my own predict and scoring function, and use sklearn's probabilities. predict() would select labels based on some probability threshold (have to decide this wisely), and scoring would take into account matches between the one category label we provide in training/test data, and the list of labels from predict().
 3. I can include other information that I collected: number of equations, images, citations etc for modeling.
 4. Think of other information that I can scrape (from Wikipedia or perhaps other sources) to include while modeling. 

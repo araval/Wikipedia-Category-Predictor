@@ -36,7 +36,7 @@ I downloaded all pages in a category, as well as pages in the first-level of sub
 
 I trained a Logistic Regression classifier, which gave me an accuracy of ~80%. Considering that the dataset is small, and that the number of features is high, I decided to not use very complex models. Logistic Regression, SVM with a linear kernel and Random Forest - all resulted in similar values for accuracy / f1-score of close to 80%. The results for different models are in _Model Selection.ipynb_. 
 
-The model accuracy/f1-score is not a good indicator of how good the model is in this case. This is because there's a significant intersection between categories *Rare_diseases* (907 pages) and *Congenital_disorders* (636 pages). Their intersection consists of 169 pages. Similarly, Rare_diseases(907) and Infectious_diseases(1067) have an intersection of 17 pages. All other category-pairs have <= 2 intesecting pages. This information was obtained from comparing sets of urls.  
+The model accuracy/f1-score is not a good indicator of how good the model is in this case. This is because there's a significant intersection between categories *Rare_diseases* (907 pages) and *Congenital_disorders* (636 pages). Their intersection consists of 169 pages. (This information was obtained from comparing sets of urls, intersection for other categories is small.)
 
 Upon inspection of misclassified articles, I found that approximately 50% of those belong to *confusion-over-Rare_diseases-Congenital-disorders* category. The articles do belong to both categories, and we should apply more than one label when that is the case. Below is an example where the probabilities for the two categories are fairly close, and both lables are applicable.
 

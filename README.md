@@ -36,7 +36,7 @@ I downloaded all pages in a category, as well as pages in the first-level of sub
 
 I trained a Logistic Regression classifier, which gave me an accuracy of ~80%. Considering that the dataset is small, and that the number of features is high, I decided to not use very complex models. Logistic Regression, SVM with a linear kernel and Random Forest - all resulted in similar values for accuracy / f1-score of close to 80%. The results for different models are in _Model Selection.ipynb_. 
 
-The model accuracy/f1-score is not a good indicator of how good the model is in this case. This is because there's a significant intersection between categories *Rare_diseases* (907 pages) and *Congenital_disorders* (636 pages). Their intersection consists of 169 pages. Similarly, Rare_diseases(907) and Infectious_diseases(1067) have an intersection of 17 pages. All other category-pairs have <= 2 intesecting pages. This information is from comparing the set of urls.  
+The model accuracy/f1-score is not a good indicator of how good the model is in this case. This is because there's a significant intersection between categories *Rare_diseases* (907 pages) and *Congenital_disorders* (636 pages). Their intersection consists of 169 pages. Similarly, Rare_diseases(907) and Infectious_diseases(1067) have an intersection of 17 pages. All other category-pairs have <= 2 intesecting pages. This information was obtained from comparing sets of urls.  
 
 Upon inspection of misclassified points, I found that for Random Forests ~95% of misclassified points belong to *confusion-over-Rare_diseases-Congenital-disorders* category. For other classifiers this number is approximately 65%. 
 The articles do belong to both categories, and we should apply both labels to the article. Below is an example where the probabilities for the two categories are fairly close, and both lables are applicable.
@@ -100,18 +100,20 @@ cosine-similarity  | Category | Other Category
 There is a considerable overlap between the categories *Rare_diseases* and *Congenital_disorders*. 
 
 
-- For each page, in addition to alpha-numeric text, I also collected the number of images (excluding tex images), number of tex images (basically math-equations), number of links, and number of citations. 
-Here's a table with means in each category:
+- For each page, in addition to alpha-numeric text, I also collected the number of images (excluding tex images), number of tex images (math-equations), number of links, and number of citations. (I did not use this data for modeling.) 
+Here's a table with (mean, median, sample standard deviataion) in each category:
+
 
 | category | images	| math_eqns  | links| citations |
-|:---:|:-----:|:-------:|:-------:|:-------:			
-Cancer |       6.50 |       0.01 |     207.94 |      19.60 | 
-Congenital_disorders |       5.66 |       0.00 |     219.13 |      14.97 | 
-Infectious_diseases |       6.41 |       0.00 |     266.55 |      23.13 | 
-Machine_learning_algorithms |       5.01 |      18.34 |      86.41 |       7.04 | 
-Medical_devices |      10.20 |       0.10 |     202.86 |      16.92 | 
-Organs_(anatomy) |       8.57 |       0.01 |     239.41 |      21.16 | 
-Rare_diseases |       4.95 |       0.00 |     251.55 |      18.44 | 
+|:---:|:-----:|:-------:|:-------:|:-------:	
+Cancer | 6.5, 5.0, 9.2 | 0.0, 0.0, 0.2 | 207.9, 87.0, 328.5 | 19.6, 7.0, 36.1 
+Congenital_disorders | 5.7, 4.0, 6.7 | 0.0, 0.0, 0.0 | 219.1, 139.5, 342.9 | 15.0, 6.0, 29.1 
+Infectious_diseases | 6.4, 5.0, 10.6 | 0.0, 0.0, 0.0 | 266.6, 185.0, 292.8 | 23.1, 7.0, 44.0 
+Machine_learning_algorithms | 5.0, 4.0, 3.0 | 18.3, 0.0, 38.6 | 86.4, 54.0, 88.3 | 7.0, 3.0, 11.0 
+Medical_devices | 10.2, 6.5, 7.0 | 0.1, 0.0, 1.1 | 202.9, 177.0, 190.3 | 16.9, 7.0, 25.1 
+Organs_(anatomy) | 8.6, 6.0, 13.8 | 0.0, 0.0, 0.1 | 239.4, 149.0, 321.7 | 21.2, 7.0, 34.9 
+Rare_diseases | 5.0, 4.0, 2.4 | 0.0, 0.0, 0.1 | 251.6, 199.0, 209.1 | 18.4, 9.0, 29.1 
+
 
 These however, are not very meaningful, because the data is small and the standard deviation within each category is high. 
 We might see significant difference if we use upper level categories such as "Science" or "History".

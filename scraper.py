@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 from copy import deepcopy
 import requests
 import os
+import sys
+
 try:
     import cPickle as pkl
 except ImportError:
@@ -51,7 +53,6 @@ def get_links(category, pre_existing_set=None, url=None):
                     subcategory_set.add(get_absolute_url(link_url))
                 elif "/" == link_url[0] and "Wikipedia:FAQ" not in link_url:
                     pages_so_far.append(get_absolute_url(link_url))
-            # ignoring anch
             except KeyError:
                 pass
 
@@ -78,7 +79,13 @@ def get_article_text_and_metadata(url):
     article_content = ""
 
     # Fetch the webpage and parse it
-    raw_html = requests.get(url).text
+    try:
+        raw_html = requests.get(url).text
+    except requests.exceptions.RequestException as e:
+        print e
+        print 'Unable to download page:', url
+        sys.exit(1)
+
     parsed_html = BeautifulSoup(raw_html, "html.parser")
     number_of_citations = 0
 
@@ -132,16 +139,26 @@ def get_links_upto_depth(category_name, depth=0):
 
 
 if __name__ == "__main__":
-    
-    with open("categories.txt", "r") as f:
-        main_categories = f.readlines()
+  
+    main_categories = ["Rare_diseases", "Infectious_diseases", \
+                       "Cancer", "Congenital_disorders", \
+                       "Organs_(anatomy)", "Machine_learning_algorithms",\
+                       "Medical_devices"]
+
+    try:
+        with open("categories.txt", "r") as f:
+            main_categories = f.read().splitlines()
+    except IOError as e:
+        print "categories.txt not found. Using default:"
+        print main_categories
+
 
     all_pages = {}
     list_of_subcategories = {}
 
     depth = 1
     for category_name in main_categories:
-        print "\nCollecting links for", category_name
+        print "Collecting links for", category_name
         pages, subcategories_with_depth = get_links_upto_depth(category_name, depth)
         all_pages[category_name] = set(pages)
         list_of_subcategories[category_name] = deepcopy(subcategories_with_depth)
@@ -151,14 +168,7 @@ if __name__ == "__main__":
 
     '''
     Everything in this file upto this point will work regardless of scale, 
-    unless Wikipedia changes its design. I am only going through categories 
-    and storing a list of url-s for articles and subcategories. Wikipedia 
-    has a about five million articles, and storing the urls in a list will 
-    require 
-        
-        5*10^6 * 90(bytes) / 10^6 = 450 MB 
-        
-    This is assuming each url is 50 characters long (~90 bytes in python).
+    unless Wikipedia changes its design. 
 
     However, the for-loop below downloads and reads articles for each 
     category and writes to disk. If a category is very large, then I will 
@@ -170,7 +180,7 @@ if __name__ == "__main__":
         for url in all_pages[category_name]:
             count += 1
             if count%100 == 0:
-                print  100*float(count)/len(all_pages[category_name]),"% done"
+                print "%s %.2f%% done" % (category_name, 100*float(count)/len(all_pages[category_name]) )
             articles.append(list(get_article_text_and_metadata(url)) + [category_name])
 
         filename = 'data/' + category_name + "_data.pkl"

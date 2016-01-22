@@ -38,8 +38,7 @@ I trained a Logistic Regression classifier, which gave me an accuracy of ~80%. C
 
 The model accuracy/f1-score is not a good indicator of how good the model is in this case. This is because there's a significant intersection between categories *Rare_diseases* (907 pages) and *Congenital_disorders* (636 pages). Their intersection consists of 169 pages. Similarly, Rare_diseases(907) and Infectious_diseases(1067) have an intersection of 17 pages. All other category-pairs have <= 2 intesecting pages. This information was obtained from comparing sets of urls.  
 
-Upon inspection of misclassified points, I found that for Random Forests ~95% of misclassified points belong to *confusion-over-Rare_diseases-Congenital-disorders* category. For other classifiers this number is approximately 65%. 
-The articles do belong to both categories, and we should apply both labels to the article. Below is an example where the probabilities for the two categories are fairly close, and both lables are applicable.
+Upon inspection of misclassified articles, I found that approximately 50% of those belong to *confusion-over-Rare_diseases-Congenital-disorders* category. The articles do belong to both categories, and we should apply more than one label when that is the case. Below is an example where the probabilities for the two categories are fairly close, and both lables are applicable.
 
 ```
 $ python predict.py
@@ -57,7 +56,6 @@ Probabilities:
               Organs_(anatomy) 00.43%
 
 
-
 Predicted Category: Rare_diseases
 ```
 
@@ -72,7 +70,7 @@ articles, and storing the urls in a list will require about 5*10^6 * 90(bytes) /
 However, when I finally download articles, I download for each category and write to disk. If a category turns out to be very large, or have very long articles, then I will have to split the list of urls and output separate files. 
 
 #### Modeling
-If suppose we were to use the entire Wikipedia corpus to have a category-predictor for new articles, then we will need to re-write this part of the code to use Spark with MLlib. Once this code is ready, it can easily be used on AWS after spinning up a spark-cluster with ~5 nodes, depending on time.
+If suppose we were to use the entire Wikipedia corpus to have a category-predictor for new articles, then we will need to re-write this part of the code to use Spark with MLlib. Once this code is ready, it can easily be used on AWS after spinning up a spark-cluster with ~5 nodes, depending on time. 
 
 
 ## ~~Interesting~~ Some facts:

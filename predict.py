@@ -1,26 +1,41 @@
 from scraper import get_article_text_and_metadata
 from sklearn.externals import joblib
+import numpy as np
+import requests
+from model import my_tokenize
+import sys
 
-from nltk.tokenize import word_tokenize
-from nltk.stem.wordnet import WordNetLemmatizer
+print "Input url: ", 
+url = raw_input().strip()
 
-wordnet = WordNetLemmatizer()
-
-def my_tokenize(doc):
-    tok = word_tokenize(doc)
-    return[wordnet.lemmatize(x) for x in tok]
-
-print "Input url: "
-url = raw_input()
+try:
+    r = requests.get(url)
+except requests.exceptions.RequestException as e: 
+    print e
+    sys.exit(1)
 
 article = [get_article_text_and_metadata(url)[0]]
 
-count_vect = joblib.load('data/count_vect.pkl')
-tfidf_tranformer = joblib.load('data/tfidf_tranformer.pkl')
+#Load vectorizer and model:
+count_vect = joblib.load('count_vect.pkl')
+tfidf_tranformer = joblib.load('tfidf_tranformer.pkl')
 model = joblib.load('logistic_model.pkl')
 
+#prepare data for prediction
 counts = count_vect.transform(article)
 article_tfidf = tfidf_tranformer.transform(counts)
 
-print model.predict_proba(article_tfidf)
-print model.predict(article_tfidf)
+#predict and print
+classes =  model.classes_
+probas = model.predict_proba(article_tfidf)
+
+indices = np.argsort(probas[0])
+
+print "\nProbabilities:\n\n"
+for i in reversed(indices):
+    print "%30s %05.2f%%" % (classes[i], probas[0][i]*100)
+
+print "\n\n"
+print 'Predicted Category:', model.predict(article_tfidf)[0]
+print "\n"
+

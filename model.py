@@ -1,4 +1,6 @@
 import os
+import numpy as np
+
 try:
     import cPickle as pkl
 except ImportError:
@@ -6,6 +8,9 @@ except ImportError:
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
+
+from nltk.stem.wordnet import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
 
 from sklearn.cross_validation import train_test_split
 from sklearn.cross_validation import cross_val_score
@@ -31,6 +36,8 @@ def load_data():
             else:
                 data += currentData[:2000]
 
+    os.chdir('../')
+
     article_text = []
     other_numbers = []
     target = []
@@ -44,34 +51,25 @@ def load_data():
 
     return article_text, other_numbers, target
 
-def make_tfidf(X, num_features = 7000):
-
-    from nltk.stem.wordnet import WordNetLemmatizer
-    from nltk.tokenize import word_tokenize
-
+def my_tokenize(doc):
     wordnet = WordNetLemmatizer()
-
-    def my_tokenize(doc):
-        tok = word_tokenize(doc)
-        return[wordnet.lemmatize(x) for x in tok]
-
-    count_vect = CountVectorizer(stop_words = 'english', max_features = num_features, tokenizer = my_tokenize)
-    X_counts = count_vect.fit_transform(X)
-
-    tfidf_transformer = TfidfTransformer()
-    X_tfidf = tfidf_transformer.fit_transform(X_counts)
-
-    joblib.dump(count_vect, 'count_vect.pkl')
-    joblib.dump(tfidf_transformer, "tfidf_tranformer.pkl")
-
-    return X_tfidf
+    tok = word_tokenize(doc)
+    return[wordnet.lemmatize(x) for x in tok]
 
 if __name__ == "__main__":
 
     article_text, other_numbers, target = load_data()
     X_train, X_test, y_train, y_test = train_test_split(article_text, target)
-    X_train_tfidf = make_tfidf(X_train)
 
-    model = LogisticRegression(C=c, class_weight="auto")   
+    count_vect = CountVectorizer(stop_words = 'english', max_features = 100, tokenizer = my_tokenize)
+    X_train_counts = count_vect.fit_transform(X_train)
+
+    tfidf_transformer = TfidfTransformer()
+    X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
+
+    joblib.dump(count_vect, 'count_vect.pkl')
+    joblib.dump(tfidf_transformer, "tfidf_tranformer.pkl")
+
+    model = LogisticRegression(C=3, class_weight="balanced")   
     model.fit(X_train_tfidf, y_train)
     joblib.dump(model, 'logistic_model.pkl')

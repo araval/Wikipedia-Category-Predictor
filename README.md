@@ -15,43 +15,37 @@ I trained a Logistic Regression classifier, which gave me an accuracy of 80%. I 
 
 ## Interesting facts:
 
-- Similar categories: I took the mean tf-idf vector in each category and calculated the cosine-similarity. 
+- Similar categories: I calculated the mean tf-idf vector in each category and calculated the cosine-similarity. 
+ 
 
 
 cosine-similarity  | Category | Other Category 
 :------:|:------------------:  | :------:
-0.876 	|      Medical_devices | Machine_learning_algorithms  
-0.836 	| Congenital_disorders | Rare_diseases  
-0.646 	|               Cancer | Rare_diseases  
-0.610 	|  Infectious_diseases | Rare_diseases  
-0.594 	|     Organs_(anatomy) | Rare_diseases  
-0.541 	|     Organs_(anatomy) | Medical_devices  
-0.530 	| Congenital_disorders | Infectious_diseases  
-0.526 	| Congenital_disorders | Organs_(anatomy)  
-0.499 	|        Rare_diseases | Medical_devices  
-0.481 	|  Infectious_diseases | Medical_devices  
-0.470 	|  Infectious_diseases | Organs_(anatomy)  
-0.469 	|     Organs_(anatomy) | Machine_learning_algorithms  
-0.460 	| Congenital_disorders | Medical_devices  
-0.450 	|  Infectious_diseases | Machine_learning_algorithms  
-0.448 	|               Cancer | Infectious_diseases  
-0.437 	|        Rare_diseases | Machine_learning_algorithms  
-0.408 	|               Cancer | Machine_learning_algorithms  
-0.403 	|               Cancer | Organs_(anatomy)  
-0.402 	|               Cancer | Medical_devices  
-0.384 	| Congenital_disorders | Cancer  
-0.383 	| Congenital_disorders | Machine_learning_algorithms  
-
+ 0.8998 | Rare_diseases | Congenital_disorders |
+ 0.5518 | Rare_diseases | Infectious_diseases |
+ 0.5065 | Rare_diseases | Organs_(anatomy) |
+ 0.5064 | Congenital_disorders | Organs_(anatomy) |
+ 0.4829 | Infectious_diseases | Congenital_disorders |
+ 0.4776 | Infectious_diseases | Medical_devices |
+ 0.4759 | Medical_devices | Organs_(anatomy) |
+ 0.4697 | Infectious_diseases | Organs_(anatomy) |
+ 0.4002 | Medical_devices | Congenital_disorders |
+ 0.3953 | Rare_diseases | Medical_devices |
+ 0.2265 | Medical_devices | Machine_learning_algorithms |
+ 0.2082 | Organs_(anatomy) | Machine_learning_algorithms |
+ 0.1969 | Rare_diseases | Machine_learning_algorithms |
+ 0.1925 | Congenital_disorders | Machine_learning_algorithms |
+ 0.1767 | Infectious_diseases | Machine_learning_algorithms |
 
 
 - Here's a table that list the mean number of images, citations etc: 
 
-images |math-equations  | links | citations | category
-:---:|:-----:|:-------:|:-------:|:-------
-5.85 |  0.00 |  244.21 |  14.45  | Congenital_disorders  
-6.26 |  0.01 |  200.79 |  17.77  | Cancer  
-6.83 |  0.00 |  298.54 |  28.22  | Infectious_diseases  
-8.04 |  0.13 |  253.56 |  17.13  | Organs_(anatomy)  
-5.62 |  0.01 |  280.42 |  21.79  | Rare_diseases  
-5.42 |  0.42 |  179.12 |  22.72  | Medical_devices  
-5.87 |  1.60 |  187.19 |  22.67  | Machine_learning_algorithms  
+| category | images	| math_eqns  | links| citations |
+|:---:|:-----:|:-------:|:-------:|:-------:			
+Cancer |       6.50 |       0.01 |     207.94 |      19.60 | 
+Congenital_disorders |       5.66 |       0.00 |     219.13 |      14.97 | 
+Infectious_diseases |       6.41 |       0.00 |     266.55 |      23.13 | 
+Machine_learning_algorithms |       5.01 |      18.34 |      86.41 |       7.04 | 
+Medical_devices |      10.20 |       0.10 |     202.86 |      16.92 | 
+Organs_(anatomy) |       8.57 |       0.01 |     239.41 |      21.16 | 
+Rare_diseases |       4.95 |       0.00 |     251.55 |      18.44 | 

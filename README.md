@@ -1,11 +1,6 @@
 # Wikipedia Category Classifier
 
-## Model
-I downloaded all pages in a category, as well as pages in the first-level of subcategories (going deeper was not of much help because for example for at level 2 articles in subcategories of Rare_diseases tended to be about individuals with the disease). This resulted in ~4000 articles, with a slight class imbalance, if I consider only the number of articles (as against its length). I let sklearn's class-weights deal with that. For modeling, I created a tf-idf matrix with 700 features. I selected the number of features by cross-validation on a naive-Bayes model, and selecting the number of features that resulted in the best cross-validation score. 
-
-I trained a Logistic Regression classifier, which gave me an accuracy of ~80%. Considering that the dataset is small, and that the number of features is high, I decided to not use very complex models. Logistic Regression, SVM with a linear kernel and Random Forest - all resulted in similar values for accuracy / f1-score of close to 80%. The results for different models are in _Model Selection.ipynb_
-
-## Result
+## Summary and usage
 
 The two requried scripts:
 
@@ -15,6 +10,7 @@ These are _scraper.py_ and _model.py_ , together in one bash script *scape_and_m
 2. _The second should take in a new Wikipedia url as input and output the probabilities of belonging to each category_
    This one is _predict.py_. It takes a url from raw_input and produces output as shown below. 
 
+3. packages I used are listed in _requirements.txt_. 
 ```
 $ python predict.py
 Input url:  https://en.wikipedia.org/wiki/Merge_sort
@@ -30,28 +26,39 @@ Probabilities:
            Infectious_diseases 02.20%
                  Rare_diseases 01.96%
 
+```
 
+## Model
+I downloaded all pages in a category, as well as pages in the first-level of subcategories (going deeper was not of much help because for example for at level 2 articles in subcategories of Rare_diseases tended to be about individuals with the disease). This resulted in ~4000 articles, with a slight class imbalance, if I consider only the number of articles (as against its length). I let sklearn's class-weights deal with that. For modeling, I created a tf-idf matrix with 700 features. I selected the number of features by cross-validation on a naive-Bayes model, and selecting the number of features that resulted in the best cross-validation score. 
 
-Predicted Category: Machine_learning_algorithms
+I trained a Logistic Regression classifier, which gave me an accuracy of ~80%. Considering that the dataset is small, and that the number of features is high, I decided to not use very complex models. Logistic Regression, SVM with a linear kernel and Random Forest - all resulted in similar values for accuracy / f1-score of close to 80%. The results for different models are in _Model Selection.ipynb_. 
 
+The model accuracy/f1-score is not a good indicator of how good the model is in this case. This is because there's a significant intersection between categories *Rare_diseases* (907 pages) and *Congenital_disorders* (636 pages). Their intersection consists of 169 pages. Similarly, Rare_diseases(907) and Infectious_diseases(1067) have an intersection of 17 pages. All other category-pairs have <= 2 intesecting pages. This information is from comparing the set of urls.  
+
+Upon inspection of misclassified points, I found that for Random Forests ~95% of misclassified points belong to *confusion-over-Rare_diseases-Congenital-disorders* category. For other classifiers this number is approximately 65%. 
+The articles do belong to both categories, and we should apply both labels to the article. Below is an example where the probabilities for the two categories are fairly close, and both lables are applicable.
+
+```
 $ python predict.py
-Input url:  https://en.wikipedia.org/wiki/Rome                
+Input url:  https://en.wikipedia.org/wiki/Cerebellar_hypoplasia
 
 Probabilities:
 
 
-           Infectious_diseases 47.68%
-                        Cancer 26.44%
-              Organs_(anatomy) 12.37%
-               Medical_devices 04.73%
-          Congenital_disorders 04.43%
-                 Rare_diseases 02.54%
-   Machine_learning_algorithms 01.81%
+                 Rare_diseases 52.55%
+          Congenital_disorders 44.47%
+               Medical_devices 00.79%
+                        Cancer 00.71%
+   Machine_learning_algorithms 00.53%
+           Infectious_diseases 00.52%
+              Organs_(anatomy) 00.43%
 
 
 
-Predicted Category: Infectious_diseases
+Predicted Category: Rare_diseases
 ```
+
+
 
 ## Scalability
 
@@ -65,6 +72,11 @@ However, when I finally download articles, I download for each category and writ
 If suppose we were to use the entire Wikipedia to have a classifier for future articles say, then we will need to re-write this
 part of the code to use mllib with spark. For the entire Wikipedia corpus, which is at least larger than 10 GB, we need cloud-
 services such as AWS. Once the spark-code is ready, it can easily be used on AWS after spinning up about 5-10 spark-clusters.
+
+
+
+
+
 
 
 ## ~~Interesting~~ Some facts:
@@ -89,8 +101,7 @@ cosine-similarity  | Category | Other Category
  0.1925 | Congenital_disorders | Machine_learning_algorithms |
  0.1767 | Infectious_diseases | Machine_learning_algorithms |
 
-There is a considerable overlap between the categories *Rare_diseases* and *Congenital_disorders*. Rare_diseases contains 907 pages, Congenital_disorders contains 636 pages, and their intersection consists of 169 pages. 
-Similarly, Rare_diseases(907) and Infectious_diseases(1067) have an intersection of 17 pages. All other category-pairs have <= 2 intesecting pages. This information is from comparing the set of urls.  
+There is a considerable overlap between the categories *Rare_diseases* and *Congenital_disorders*. 
 
 
 - For each page, in addition to alpha-numeric text, I also collected the number of images (excluding tex images), number of tex images (basically math-equations), number of links, and number of citations. 
@@ -109,6 +120,9 @@ Rare_diseases |       4.95 |       0.00 |     251.55 |      18.44 |
 These however, are not very meaningful, because the data is small and the standard deviation within each category is high. 
 We might see significant difference if we use upper level categories such as "Science" or "History".
 
-## Future Steps
-1. Updating the model to run on a cluster would be a natural next step. For this I would work on _Spark_.
-2. When there's a significant overlap between categories such as in case of *Rare_diseases* and *Congenital_disorders*, 
+
+## Next Steps
+1. Updating the model to run on a cluster would be a natural next step. For this I would work building a model with _Spark-mllib_.
+2. I can come up with a better way for evaluating the model. I only need to have my own predict and scoring function, and use sklearns probabilities. predict() would select labels based on some probability threshold, and scoring would take into account matches between the one category label we provide in training/test data, and the list of labels from predict().
+3. I can include other information that I collected: number of equations, images, citations etc for modeling.
+4. Think of other information that I can scrape (from Wikipedia or perhaps other sources) to include while modeling. 

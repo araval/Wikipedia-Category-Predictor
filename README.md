@@ -2,15 +2,16 @@
 
 ## Summary and usage
 
-The two requried scripts:
+Requried scripts:
 
-1. _The first scrapes the webpages and builds the dataset and a serialized classifier_  
-These are _scraper.py_ and _model.py_ , together in one bash script *scape_and_model.sh*. _scraper.py_ runs for a longer time than _model.py_, so I kept them separate. _scarper.py_ reads categories from _categories.txt_, creates a directory _data_ within the current directory, where it stores each category's data in a separate file. _model.py_ reads from _data_, and creates a model which it saves to _pickledModel_.
+1. "_The first scrapes the webpages and builds the dataset and a serialized classifier_ "
+These are (1a) _scraper.py_ and (1b)_model.py_ , together in one bash script *scape_and_model.sh*. _scarper.py_ reads categories from _categories.txt_, creates a directory _data_, where it stores each category's data in a separate file. _model.py_ reads from _data_, and creates a model which it saves to _pickledModel_.
 
-2. _The second should take in a new Wikipedia url as input and output the probabilities of belonging to each category_
+2. "_The second should take in a new Wikipedia url as input and output the probabilities of belonging to each category_"
    This one is _predict.py_. It takes a url from raw_input and produces output as shown below. 
 
-3. packages I used are listed in _requirements.txt_. 
+The packages I used are listed in _requirements.txt_. 
+
 ```
 $ python predict.py
 Input url:  https://en.wikipedia.org/wiki/Merge_sort

@@ -17,9 +17,9 @@ except requests.exceptions.RequestException as e:
 article = [get_article_text_and_metadata(url)[0]]
 
 #Load vectorizer and model:
-count_vect = joblib.load('count_vect.pkl')
-tfidf_tranformer = joblib.load('tfidf_tranformer.pkl')
-model = joblib.load('logistic_model.pkl')
+count_vect = joblib.load('pickledModel/count_vect.pkl')
+tfidf_tranformer = joblib.load('pickledModel/tfidf_tranformer.pkl')
+model = joblib.load('pickledModel/logistic_model.pkl')
 
 #prepare data for prediction
 counts = count_vect.transform(article)

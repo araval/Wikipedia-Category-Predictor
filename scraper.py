@@ -11,12 +11,14 @@ except ImportError:
 def get_links(category, pre_existing_set=None, url=None):
     """
     Generates a list of articles and sub-categories in a category on wikipedia
-    :param category: category name as a string
-    :param pre_existing_set: (Optional) set of subcategories, if provided this code will append to that set
-    :param url: url to go to
-    :param done: set of subcatgory urls already trawled
-    :return: tuple of (list of links, queue of sub-categories)
+
+    category: category name as a string
+    pre_existing_set: (Optional) set of subcategories, if provided this code 
+    will append to that set
+
+    returns a tuple of (list of links, queue of sub-categories)
     """
+
     def get_category_url(category_name):
         category_prefix = "https://en.wikipedia.org/wiki/Category:"
         return category_prefix + category_name
@@ -30,7 +32,7 @@ def get_links(category, pre_existing_set=None, url=None):
     html_category_page = requests.get(url).text
     parsed_category_page = BeautifulSoup(html_category_page, "html.parser")
     content = parsed_category_page.findAll("div", {"id":"mw-pages"})
-    content.extend(parsed_category_page.findAll("div", {"id":"mw-subcategories"}))
+    content.extend(parsed_category_page.findAll("div",{"id":"mw-subcategories"}))
 
     # Initialize the pages list and subcategory queue
     pages_so_far = []
@@ -39,7 +41,8 @@ def get_links(category, pre_existing_set=None, url=None):
     else:
         subcategory_set = set()
 
-    # Add all "links to pages" to the pages list, and all "links to subcategories" to the subcategory queue
+    # Add all "links to pages" to the pages list, and all 
+    # "links to subcategories" to the subcategory queue
     for item in content:
         for link_tag in item.select("a"):
             try:
@@ -53,10 +56,13 @@ def get_links(category, pre_existing_set=None, url=None):
                 pass
 
     # If this category listing has more pages, then proceed to them
-    last_text_on_page = parsed_category_page.findAll("div", {"class":"mw-content-ltr"})[0].select("a")[-1].text
+    last_text_on_page = parsed_category_page.findAll("div", \
+                     {"class":"mw-content-ltr"})[0].select("a")[-1].text
     if last_text_on_page == "next page":
-        next_page_url = get_absolute_url(parsed_category_page.findAll("div", {"class":"mw-content-ltr"})[0].select("a")[-1]["href"])
-        pages_next, subcategory_set_next = get_links(category, subcategory_set, next_page_url)
+        next_page_url = get_absolute_url(parsed_category_page.findAll("div",\
+                     {"class":"mw-content-ltr"})[0].select("a")[-1]["href"])
+        pages_next, subcategory_set_next = get_links(category, \
+                                               subcategory_set, next_page_url)
         pages_so_far.extend(pages_next)
         subcategory_set_next.update(subcategory_set_next)
 
@@ -66,8 +72,8 @@ def get_links(category, pre_existing_set=None, url=None):
 def get_article_text_and_metadata(url):
     """
     Fetches and cleans a wikipedia article
-    :param url: URL of the wikipedia article
-    :return: tuple of (plaintext article content, number_of_images, number_of_internal_links, number_of_citations)
+    returns a tuple of (plaintext article content, number_of_non_tex_images, 
+         number_of_tex_images, number_of_internal_links, number_of_citations)
     """
     article_content = ""
 
@@ -102,12 +108,17 @@ def get_article_text_and_metadata(url):
             number_of_tex += 1
 
     number_of_non_tex = number_of_images - number_of_tex
-    number_of_internal_links = len(parsed_html.find("div", {"id":"bodyContent"}).select("a")) - number_of_citations
+    number_of_internal_links = len(parsed_html.find("div", \
+                    {"id":"bodyContent"}).select("a")) - number_of_citations
 
     return article_content, number_of_non_tex, number_of_tex, number_of_internal_links, number_of_citations
 
 
 def get_links_upto_depth(category_name, depth=0):
+    """
+    depth refers to subcatergory level, 0 is the initial page, 1 is 
+    first set of subcategories etc.
+    """
     pages_so_far, subcategories = get_links(category_name)
     subcategories_at_depth = dict()
     subcategories_at_depth[0] = list(subcategories)
@@ -139,18 +150,19 @@ if __name__ == "__main__":
         os.mkdir('data')
 
     '''
-    Everything in this file upto this point will work regardless of scale, unless 
-    Wikipedia changes its design. I am only going through categories and storing a
-    list of url-s for articles and subcategories. Wikipedia has a about five million
-    articles, and storing the urls in a list will require 
+    Everything in this file upto this point will work regardless of scale, 
+    unless Wikipedia changes its design. I am only going through categories 
+    and storing a list of url-s for articles and subcategories. Wikipedia 
+    has a about five million articles, and storing the urls in a list will 
+    require 
         
         5*10^6 * 90(bytes) / 10^6 = 450 MB 
         
-    This is assuming each url is 50 characters long (~90 bytes).
+    This is assuming each url is 50 characters long (~90 bytes in python).
 
-    However, the for-loop below downloads and reads articles for each category and 
-    writes to disk. If a category is very large, then I will have to split the list
-    and write separate files. 
+    However, the for-loop below downloads and reads articles for each 
+    category and writes to disk. If a category is very large, then I will 
+    have to split the list and write separate files. 
     '''
     for category_name in all_pages:
         articles = []

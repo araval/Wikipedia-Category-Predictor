@@ -61,4 +61,5 @@ if __name__ == "__main__":
 
     model = LogisticRegression(C=1, class_weight="balanced")   
     model.fit(X_train_tfidf, y_train)
+
     joblib.dump(model, 'pickledModel/logistic_model.pkl')

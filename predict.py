@@ -38,4 +38,3 @@ for i in reversed(indices):
 print "\n\n"
 print 'Predicted Category:', model.predict(article_tfidf)[0]
 print "\n"
-

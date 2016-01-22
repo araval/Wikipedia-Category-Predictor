@@ -104,7 +104,7 @@ There is a considerable overlap between the categories *Rare_diseases* and *Cong
 Here's a table with (mean, median, sample standard deviataion) in each category:
 
 
-| category | images	| math_eqns  | links| citations |
+| Category | Images	| Equations(math)  | Links| Citations |
 |:---:|:-----:|:-------:|:-------:|:-------:	
 Cancer | 6.5, 5.0, 9.2 | 0.0, 0.0, 0.2 | 207.9, 87.0, 328.5 | 19.6, 7.0, 36.1 
 Congenital_disorders | 5.7, 4.0, 6.7 | 0.0, 0.0, 0.0 | 219.1, 139.5, 342.9 | 15.0, 6.0, 29.1 
@@ -115,8 +115,7 @@ Organs_(anatomy) | 8.6, 6.0, 13.8 | 0.0, 0.0, 0.1 | 239.4, 149.0, 321.7 | 21.2, 
 Rare_diseases | 5.0, 4.0, 2.4 | 0.0, 0.0, 0.1 | 251.6, 199.0, 209.1 | 18.4, 9.0, 29.1 
 
 
-These however, are not very meaningful, because the data is small and the standard deviation within each category is high. 
-We might see significant difference if we use upper level categories such as "Science" or "History".
+These however, are not very meaningful, because the data-set is small. We might see significant difference if we use upper level categories such as "Science" or "History".
 
 
 ## Next Steps

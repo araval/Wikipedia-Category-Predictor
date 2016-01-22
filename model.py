@@ -16,7 +16,6 @@ from sklearn.cross_validation import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.externals import joblib
 
-
 def load_data():
 
     os.chdir('data/')
@@ -26,24 +25,17 @@ def load_data():
             print 'reading', filename
             with open(filename) as f:
                 currentData = pkl.load(f)
-            if len(currentData) < 2000:
-                data += currentData
-            else:
-                data += currentData[:2000]
+            data += currentData
     os.chdir('../')
 
     article_text = []
-    other_numbers = []
     target = []
 
     for item in data:
         article_text.append(item[0])
-        other_numbers.append([item[1], item[2], item[3], item[4]])
         target.append(item[5])
 
-    other_numbers = np.array(other_numbers)
-
-    return article_text, other_numbers, target
+    return article_text, target
 
 def my_tokenize(doc):
     wordnet = WordNetLemmatizer()
@@ -52,10 +44,10 @@ def my_tokenize(doc):
 
 if __name__ == "__main__":
 
-    article_text, other_numbers, target = load_data()
+    article_text, target = load_data()
     X_train, X_test, y_train, y_test = train_test_split(article_text, target)
 
-    count_vect = CountVectorizer(stop_words = 'english', max_features = 100, tokenizer = my_tokenize)
+    count_vect = CountVectorizer(stop_words = 'english', max_features = 700, tokenizer = my_tokenize)
     X_train_counts = count_vect.fit_transform(X_train)
 
     tfidf_transformer = TfidfTransformer()

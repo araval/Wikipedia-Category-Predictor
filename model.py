@@ -13,18 +13,13 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
 from sklearn.cross_validation import train_test_split
-from sklearn.cross_validation import cross_val_score
-
 from sklearn.linear_model import LogisticRegression
-
-from sklearn.pipeline import Pipeline
 from sklearn.externals import joblib
 
 
 def load_data():
 
     os.chdir('data/')
-
     data = []
     for filename in os.listdir(os.getcwd()):
         if filename[-4:] == '.pkl':
@@ -35,7 +30,6 @@ def load_data():
                 data += currentData
             else:
                 data += currentData[:2000]
-
     os.chdir('../')
 
     article_text = []
@@ -67,9 +61,12 @@ if __name__ == "__main__":
     tfidf_transformer = TfidfTransformer()
     X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
 
-    joblib.dump(count_vect, 'count_vect.pkl')
-    joblib.dump(tfidf_transformer, "tfidf_tranformer.pkl")
+    if not os.path.isdir('pickledModel'):
+        os.mkdir('pickledModel')
 
-    model = LogisticRegression(C=3, class_weight="balanced")   
+    joblib.dump(count_vect, 'pickledModel/count_vect.pkl')
+    joblib.dump(tfidf_transformer, "pickledModel/tfidf_tranformer.pkl")
+
+    model = LogisticRegression(C=1, class_weight="balanced")   
     model.fit(X_train_tfidf, y_train)
-    joblib.dump(model, 'logistic_model.pkl')
+    joblib.dump(model, 'pickledModel/logistic_model.pkl')

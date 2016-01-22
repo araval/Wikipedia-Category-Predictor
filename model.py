@@ -22,7 +22,7 @@ def load_data():
     data = []
     for filename in os.listdir(os.getcwd()):
         if filename[-4:] == '.pkl':
-            print 'reading', filename
+            print 'Reading', filename
             with open(filename) as f:
                 currentData = pkl.load(f)
             data += currentData
@@ -45,6 +45,8 @@ def my_tokenize(doc):
 if __name__ == "__main__":
 
     article_text, target = load_data()
+
+    print "Training Model ..."
     X_train, X_test, y_train, y_test = train_test_split(article_text, target)
 
     count_vect = CountVectorizer(stop_words = 'english', max_features = 700, tokenizer = my_tokenize)
@@ -62,4 +64,5 @@ if __name__ == "__main__":
     model = LogisticRegression(C=1, class_weight="balanced")   
     model.fit(X_train_tfidf, y_train)
 
+    print "Saving Model..."
     joblib.dump(model, 'pickledModel/logistic_model.pkl')

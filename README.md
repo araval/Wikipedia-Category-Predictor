@@ -1,17 +1,13 @@
 # Wikipedia Category Classifier
 
-## Summary and usage
+## Summary and Usage
+The required packages are listed in _requirements.txt_. 
 
-Requried scripts:
+Scripts:
 
-1. "_The first scrapes the webpages and builds the dataset and a serialized classifier_ "  
-These are _scraper.py_ and _model.py_ , together in one bash script *scape_and_model.sh*.   
-_scarper.py_ reads categories from _categories.txt_ if present, otherwise, uses default hard-coded list of categories, creates a directory _data_, where it stores each category's data in a separate file. _model.py_ reads from _data_, and creates a model which it saves in directory _pickledModel_. To add or remove categories only _categories.txt_ needs to be modified. 
+1. _scraper.py_ scrapes Wikipedia pages for categories listed in _categories.txt_ if present. Otherwise, it uses default hard-coded list of categories. It creates a directory _data_, where it stores each category's data in a separate file. _model.py_ reads from _data_, and creates a model which it saves in directory _pickledModel_. To add or remove categories only _categories.txt_ needs to be modified. 
 
-2. "_The second should take in a new Wikipedia url as input and output the probabilities of belonging to each category_"  
-   This one is _predict.py_. It takes a url from raw_input and produces output as shown below. 
-
-The packages I used are listed in _requirements.txt_. 
+2. _predict.py_ takes in a new Wikipedia url as input and outputs the probabilities of the page belonging to each category as shown below. 
 
 ```
 $ python predict.py
@@ -65,16 +61,17 @@ Predicted Category: Rare_diseases
 ## Scalability
 
 #### Scraping
-The scraping process requires only a minor change in case we scrape large amounts of data, unless Wikipedia changes its design. I iterate through categories and store a list of url-s for articles and sub-categories. Wikipedia has a about five million
-articles, and storing the urls in a list will require about 5*10^6 * 90(bytes) / 10^6 = 450 MB. This is assuming each url is 50 characters long (~90 bytes in python).
+The scraping process requires only a minor change in case we scrape large amounts of data, unless Wikipedia changes its design. I iterate through categories and store a list of url-s for articles and sub-categories. Wikipedia has a about five million articles, and storing the urls in a list will require about 5*10^6 * 90(bytes) / 10^6 = 450 MB. This is assuming each url is 50 characters long (~90 bytes in python).
 
 However, when I finally download articles, I download for each category and write to disk. If a category turns out to be very large, or have very long articles, then I will have to split the list of urls and output separate files. 
 
+Furthermore, we might also want to parallelize scraping to save time, even if each category's data fits in memory. 
+
 #### Modeling
-If suppose we were to use the entire Wikipedia corpus to have a category-predictor for new articles, then we will need to re-write this part of the code to use Spark with MLlib. Once this code is ready, it can easily be used on AWS after spinning up a spark-cluster with ~5 nodes, depending on time. 
+If suppose we were to use the entire Wikipedia corpus to have a category-predictor for new articles, then we will need to re-write this part of the code to use Spark with MLlib. Once this code is ready, it can easily be used on AWS after spinning up a spark-cluster with ~5-10 nodes, depending on time. 
 
 
-## ~~Interesting~~ Some facts:
+## ~~Interesting~~ Some facts
 
 - Similar categories: I calculated the mean tf-idf vector for each category and calculated the cosine-similarity. The unsurprising results are tabulated below
  
